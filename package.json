@@ -1,8 +1,10 @@
 {
-  "name": "react-example",
+  "name": "study-travel-timer",
+  "description": "A gamified flight-simulator focus timer that turns study sessions into journeys.",
+  "author": "tekulapalli abhiram (pokephantom98765)",
   "homepage": "https://pokephantom98765.github.io/study-travel-timer",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server/index.ts",

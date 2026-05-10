@@ -54,7 +54,7 @@ app.post('/api/session-feedback', async (req, res) => {
 
     res.json({ feedback: response.text || null });
   } catch (error) {
-    console.error('Gemini API error:', error);
+    console.error('API error:', error);
     res.status(500).json({ feedback: null });
   }
 });
