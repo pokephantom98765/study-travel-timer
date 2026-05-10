@@ -1,0 +1,54 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "User Profile",
+      "description": "User focus stats, rank, and achievements.",
+      "type": "object",
+      "properties": {
+        "xp": { "type": "number", "description": "Total experience points." },
+        "streak": { "type": "number", "description": "Consecutive focus days." },
+        "lastLogin": { "type": "string", "format": "date-time", "description": "Last activity timestamp." },
+        "totalMs": { "type": "number", "description": "Total milliseconds focused." },
+        "distractions": { "type": "number", "description": "Total tabs switched." },
+        "sessions": { "type": "number", "description": "Total journeys completed." },
+        "ach1": { "type": "boolean" },
+        "ach2": { "type": "boolean" },
+        "ach3": { "type": "boolean" },
+        "ach4": { "type": "boolean" }
+      },
+      "required": ["xp", "streak", "totalMs", "sessions"]
+    },
+    "JourneyRecord": {
+      "title": "Journey Log",
+      "description": "Specific focus session data.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "mode": { "type": "string", "enum": ["flight", "train", "bus"] },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "subject": { "type": "string" },
+        "duration": { "type": "number" },
+        "goals": { "type": "number" },
+        "goalsMet": { "type": "number" },
+        "breaks": { "type": "number" },
+        "distractions": { "type": "number" },
+        "pauses": { "type": "number" },
+        "score": { "type": "number" },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["id", "mode", "duration", "score", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "Profile",
+      "description": "User profile document."
+    },
+    "/users/{userId}/history/{journeyId}": {
+      "schema": "JourneyRecord",
+      "description": "Individual journey logs for a user."
+    }
+  }
+}

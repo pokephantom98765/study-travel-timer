@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-bg-primary: #0a0e1a;
+  --color-bg-secondary: #111827;
+  --color-bg-card: #1a2235;
+  --color-accent-blue: #3b82f6;
+  --color-accent-teal: #14b8a6;
+  --color-accent-amber: #f59e0b;
+  --color-accent-coral: #ef4444;
+  --color-accent-purple: #8b5cf6;
+  --color-accent-green: #10b981;
+
+  --animate-drift: driftCloud linear infinite;
+  --animate-landscape: scrollLandscape linear infinite;
+  --animate-rain: rainAnimation linear infinite;
+
+  @keyframes rainAnimation {
+    from { transform: translateY(-20vh) rotate(15deg); }
+    to { transform: translateY(110vh) rotate(15deg); }
+  }
+  
+  @keyframes driftCloud {
+    from { transform: translateX(-200px) scale(var(--scale)) translateZ(0); }
+    to { transform: translateX(110vw) scale(var(--scale)) translateZ(0); }
+  }
+  
+  @keyframes scrollLandscape {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+  }
+}
+
+@layer base {
+  html, body, #root {
+    min-height: 100dvh;
+  }
+
+  body {
+    @apply bg-bg-primary text-[#f0f4ff] font-sans overflow-hidden;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  * {
+    scrollbar-width: thin;
+  }
+}
+
+.glass-card {
+  @apply bg-black/65 backdrop-blur-[12px] border border-white/10 rounded-xl p-6;
+}
+
+.cloud-shape {
+  width: 120px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50px;
+  filter: blur(2px);
+  position: relative;
+}
+
+.cloud-shape::before,
+.cloud-shape::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+}
+
+.cloud-shape::before {
+  width: 60px;
+  height: 60px;
+  top: -25px;
+  left: 15px;
+}
+
+.cloud-shape::after {
+  width: 80px;
+  height: 80px;
+  top: -40px;
+  right: 15px;
+}
+
+.landscape-scroll {
+  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,100 L0,50 Q100,30 200,60 T400,40 T600,70 T800,40 T1000,50 L1000,100 Z" fill="%23050810"/></svg>') repeat-x;
+  background-size: contain;
+  animation: scrollLandscape linear infinite;
+}
+
+@media (max-width: 640px) {
+  .cloud-shape {
+    transform: scale(0.85);
+    transform-origin: left center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

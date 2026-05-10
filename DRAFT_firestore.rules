@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // UTILS
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // VALIDATION HELPERS
+    function isValidProfile(data) {
+      return data.keys().hasAll(['xp', 'streak', 'totalMs', 'sessions'])
+        && data.xp is number && data.xp >= 0
+        && data.streak is number && data.streak >= 0
+        && data.totalMs is number && data.totalMs >= 0
+        && data.sessions is number && data.sessions >= 0
+        && (!data.hasAny(['lastLogin']) || data.lastLogin is string)
+        && (!data.hasAny(['distractions']) || data.distractions is number)
+        && (!data.hasAny(['ach1']) || data.ach1 is bool)
+        && (!data.hasAny(['ach2']) || data.ach2 is bool)
+        && (!data.hasAny(['ach3']) || data.ach3 is bool)
+        && (!data.hasAny(['ach4']) || data.ach4 is bool)
+        && data.keys().size() <= 12; // Prevent shadow fields
+    }
+
+    function isValidJourney(data) {
+      return data.keys().hasAll(['id', 'mode', 'duration', 'score', 'timestamp'])
+        && data.id is string && data.id.size() <= 64
+        && data.mode in ['flight', 'train', 'bus']
+        && data.duration is number && data.duration >= 0
+        && data.score is number && data.score >= 0 && data.score <= 100
+        && data.timestamp is number
+        && (!data.hasAny(['from']) || (data.from is string && data.from.size() <= 50))
+        && (!data.hasAny(['to']) || (data.to is string && data.to.size() <= 50))
+        && (!data.hasAny(['subject']) || (data.subject is string && data.subject.size() <= 200))
+        && data.keys().size() <= 15;
+    }
+
+    // COLLECTIONS
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidProfile(incoming());
+      allow update: if isOwner(userId) && isValidProfile(incoming());
+      
+      match /history/{journeyId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId);
+        allow create: if isOwner(userId) 
+                      && isValidJourney(incoming()) 
+                      && isValidId(journeyId)
+                      && exists(/databases/$(database)/documents/users/$(userId));
+      }
+    }
+  }
+}
