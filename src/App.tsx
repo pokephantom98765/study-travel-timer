@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Sky } from './components/Sky';
 import { Booking } from './components/screens/Booking';
+import { About } from './components/screens/About';
 import { JourneyRecord, Profile, SessionState } from './types';
 
 const PassScreen = lazy(async () => import('./components/screens/PassScreen').then((m) => ({ default: m.PassScreen })));
@@ -9,7 +10,7 @@ const Landing = lazy(async () => import('./components/screens/Landing').then((m)
 const Analytics = lazy(async () => import('./components/screens/Analytics').then((m) => ({ default: m.Analytics })));
 
 export default function App() {
-  const [screen, setScreen] = useState<'booking' | 'pass' | 'journey' | 'landing' | 'analytics'>('booking');
+  const [screen, setScreen] = useState<'booking' | 'pass' | 'journey' | 'landing' | 'analytics' | 'about'>('booking');
   const [session, setSession] = useState<SessionState | null>(null);
   const [lastRecord, setLastRecord] = useState<JourneyRecord | null>(null);
   const [profile, setProfile] = useState<Profile>({
@@ -80,8 +81,12 @@ export default function App() {
       <main className="relative z-10 h-[100dvh] w-full overflow-y-auto overscroll-contain [padding-bottom:env(safe-area-inset-bottom)]">
         {screen === 'booking' && (
           <div className="min-h-full flex flex-col items-center justify-center p-4">
-            <Booking onBook={handleBook} weather={weather} />
+            <Booking onBook={handleBook} weather={weather} onAbout={() => setScreen('about')} />
           </div>
+        )}
+
+        {screen === 'about' && (
+          <About onBack={() => setScreen('booking')} />
         )}
 
         <Suspense

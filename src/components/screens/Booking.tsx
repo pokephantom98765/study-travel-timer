@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { SessionState, TravelMode } from '../../types';
 import { FLIGHT_CITIES, TRAIN_CITIES, BUS_ROUTES, DURATIONS } from '../../constants/data';
-import { Plane, Train, Bus, ArrowRightLeft } from 'lucide-react';
+import { Plane, Train, Bus, ArrowRightLeft, Info } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface BookingProps {
   onBook: (state: SessionState) => void;
   weather?: 'clear' | 'rain' | 'cloudy';
+  onAbout?: () => void;
 }
 
-export const Booking: React.FC<BookingProps> = ({ onBook, weather = 'clear' }) => {
+export const Booking: React.FC<BookingProps> = ({ onBook, weather = 'clear', onAbout }) => {
+
+
   const [mode, setMode] = useState<TravelMode>('flight');
   const [from, setFrom] = useState('DEL');
   const [to, setTo] = useState('BOM');
@@ -29,13 +32,13 @@ export const Booking: React.FC<BookingProps> = ({ onBook, weather = 'clear' }) =
     : mode === 'train'
       ? TRAIN_CITIES
       : Array.from(
-          new Map(
-            BUS_ROUTES.flatMap((route) => [
-              [route.from, { code: route.from, name: route.from }],
-              [route.to, { code: route.to, name: route.to }]
-            ])
-          ).values()
-        );
+        new Map(
+          BUS_ROUTES.flatMap((route) => [
+            [route.from, { code: route.from, name: route.from }],
+            [route.to, { code: route.to, name: route.to }]
+          ])
+        ).values()
+      );
 
   const getEstDuration = () => {
     if (mode === 'flight' || mode === 'train') {
@@ -124,6 +127,13 @@ export const Booking: React.FC<BookingProps> = ({ onBook, weather = 'clear' }) =
             <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600">Weather: {weather}</span>
           </div>
         </div>
+        <button
+          onClick={onAbout}
+          className="rounded-full border border-white/20 p-2.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+          title="About StudyTravel"
+        >
+          <Info size={18} />
+        </button>
       </div>
 
       <div className="rounded-xl border border-white/10 bg-[#1a2235] p-4 shadow-xl sm:p-6 [padding-bottom:calc(1rem+env(safe-area-inset-bottom))]">
